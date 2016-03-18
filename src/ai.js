@@ -2,44 +2,103 @@ var utils = require('./utils');
 
 var ai = {
 
-    checkWinnerByRow: function (model, nRow, size) {
+    findWinnerByRow: function (model, nRow, size, seqLength) {
+        var row = utils.sliceRow(model, nRow, size);
 
-        var row = model.slice(nRow*size, nRow*size + size);
-        console.log(row);
+        var xScore = 0;
+        var oScore = 0;
 
-        return utils.cmp(row, [1, 1, 1])
-            || utils.cmp(row, [2, 2, 2])
-        ;
+        for (var i = 0; i < size; i++) {
+            var cell = row[i];
+
+            if (cell == 1) xScore++;
+            else xScore = 0;
+
+            if (cell == 2) oScore++;
+            else oScore = 0;
+
+            if (xScore >= seqLength) return 1;
+            if (oScore >= seqLength) return 2;
+        }
+
+        return 0;
     },
 
-    checkWinnerByCol: function (model, nCol, size) {
+    findWinnerByCol: function (model, nCol, size, seqLength) {
+        var col = utils.sliceColumn(model, nCol, size);
 
-        var col = model.slice(nCol*size, nCol*size + size);
-        console.log(col);
+        var xScore = 0;
+        var oScore = 0;
 
-        return utils.cmp(col, [1, 1, 1])
-            || utils.cmp(col, [2, 2, 2])
-        ;
+        for (var i = 0; i < size; i++) {
+            var cell = col[i];
+
+            if (cell == 1) xScore++;
+            else xScore = 0;
+
+            if (cell == 2) oScore++;
+            else oScore = 0;
+
+            if (xScore >= seqLength) return 1;
+            if (oScore >= seqLength) return 2;
+        }
+
+        return 0;
     },
 
-    // wild area //////////
+    findWinnerByDiagonal: function (model, isLeftTopToRightDown, size, seqLength) {
+        var hypo =
+            isLeftTopToRightDown ?
+                utils.sliceLeftTopToRightBottomDiagonal(model, size) :
+                utils.sliceRightTopToLeftBottomDiagonal(model, size);
 
-    step: function (model, turn) {
-        return model;
+        var xScore = 0;
+        var oScore = 0;
+
+        for (var i = 0; i < size; i++) {
+            var cell = hypo[i];
+
+            if (cell == 1) xScore++;
+            else xScore = 0;
+
+            if (cell == 2) oScore++;
+            else oScore = 0;
+
+            if (xScore >= seqLength) return 1;
+            if (oScore >= seqLength) return 2;
+        }
+
+        return 0;
     },
 
-    findWinner(model) {
-        console.log('# findWinner');
+    findWinner(model, size, seqLength) {
+        var winner = 0;
 
-        //console.log(checkWinnerByRow(model, 0));
-        //console.log(checkWinnerByRow(model, 1));
-        //console.log(checkWinnerByRow(model, 2));
-        //
-        //console.log(checkWinnerByCol(model, 0));
-        //console.log(checkWinnerByCol(model, 1));
-        //console.log(checkWinnerByCol(model, 2));
+        for (var i = 0; i < size; i++) {
+            var winnerByRow = this.findWinnerByRow(model, i, size, seqLength);
+            if (winnerByRow) {
+                return winnerByRow;
+            }
+            var winnerByCol = this.findWinnerByCol(model, i, size, seqLength);
+            if (winnerByCol) {
+                return winnerByCol;
+            }
+        }
+
+        var winnerByLtToRbDiagonal = this.findWinnerByDiagonal(model, true, size, seqLength);
+        if (winnerByLtToRbDiagonal) {
+            return winnerByLtToRbDiagonal;
+        }
+
+        var winnerByRtToLbDiagonal = this.findWinnerByDiagonal(model, false, size, seqLength);
+        if (winnerByRtToLbDiagonal) {
+            return winnerByRtToLbDiagonal;
+        }
+
+        return winner;
 
     }
+
 };
 
 module.exports = ai;
