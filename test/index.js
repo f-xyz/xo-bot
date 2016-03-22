@@ -1,61 +1,14 @@
 var _ = require('lodash');
+var utils = require('../src/utils');
 var chai = require('chai');
 chai.should();
+
 
 var size = 3;
 var seqLength = 3;
 
-describe('Utils', function () {
-    var utils = require('../src/utils');
-    var model = [
-        0, 1, 2,
-        3, 4, 5,
-        6, 7, 8
-    ];
-    describe('compareArrays(a, b)', function () {
-        it('returns true if models are identical', function () {
-            // arrange
-            var modelClone = _.cloneDeep(model);
-            // act
-            var res = utils.compareArrays(model, modelClone);
-            // assert
-            res.should.eq(true);
-        });
-        it('returns false otherwise', function () {
-            // arrange
-            var modelClone = _.cloneDeep(model);
-            modelClone[size-1] = NaN;
-            // act
-            var res = utils.compareArrays(model, modelClone);
-            // assert
-            res.should.eq(false);
-        });
-    });
-    it('sliceRow(model, nRow)', function () {
-        // act
-        var res = utils.sliceRow(model, 1, size);
-        // assert
-        res.should.eql([3, 4, 5]);
-    });
-    it('sliceColumn(model, nCol)', function () {
-        // act
-        var res = utils.sliceColumn(model, 1, size);
-        // assert
-        res.should.eql([1, 4, 7]);
-    });
-    it('sliceLeftTopToRightBottomDiagonal()', function () {
-        // act
-        var res = utils.sliceLeftTopToRightBottomDiagonal(model, size);
-        // assert
-        res.should.eql([0, 4, 8]);
-    });
-    it('sliceRightTopToLeftBottomDiagonal()', function () {
-        // act
-        var res = utils.sliceRightTopToLeftBottomDiagonal(model, size);
-        // assert
-        res.should.eql([2, 4, 6]);
-    });
-});
+require('./utils.tests');
+
 
 describe('Ai', function () {
     var ai = require('../src/ai');
@@ -275,4 +228,61 @@ describe('Ai', function () {
             res.should.eq(2);
         });
     });
+
+    describe('findTreeOfPossibleTurns()', function () {
+
+        // returns tree of possible turns
+        // calculates N turns forward
+        // changes player in each subtree
+
+        it('returns tree of possible turns', function () {
+            // arrange
+            var model = [
+                0, 0, 0,
+                0, 0, 0,
+                0, 0, 0
+            ];
+            // act
+            //console.log(ai.findWinner(model, 3, 3));
+            console.time('[timer] findTreeOfPossibleTurns');
+            var turnTree = ai.findTreeOfPossibleTurns({
+                model: model,
+                size: 3,
+                seqLength: 3,
+                player: 2,
+                nTurnsForward: 1
+            });
+            console.timeEnd('[timer] findTreeOfPossibleTurns');
+
+            var turnList = ai.findBestTurn(turnTree);
+
+            // assert
+            //console.log(JSON.stringify(res));
+        });
+    });
+
+    describe('makeTurn()', function () {
+        xit('???', function () {
+            // arrange
+            var model = [
+                0, 0, 0,
+                0, 0, 0,
+                0, 0, 0
+            ];
+            // act
+            utils.dumpModel(model, size);
+            for (var i = 0; i < 9; i++) {
+                console.log(new Array(41).join('=') + ' ' + i);
+                model = ai.makeTurn({ model: model, size: size, seqLength: seqLength, player: 1 });
+                console.log(new Array(41).join('-'));
+                utils.dumpModel(model, size);
+                if (ai.findWinner(model, size, seqLength)) {
+                    break;
+                }
+            }
+            // assert
+            //res.should.eq(0);
+        });
+    });
+
 });
