@@ -49,7 +49,7 @@ const utils = {
         return res;
     },
 
-    getPossibleTurns: function (model, size) {
+    findPossibleTurns: function (model, size) {
         var freeCells = [];
         for (var i = 0; i < model.length; i++) {
             if (model[i] == 0) {

@@ -87,7 +87,7 @@ var ai = {
         utils.dumpModel(model, size, level*4);
 
         var trees = [];
-        var possibleTurns = utils.getPossibleTurns(model, size);
+        var possibleTurns = utils.findPossibleTurns(model, size);
 
         //console.log(possibleTurns);
 
@@ -141,7 +141,17 @@ var ai = {
         // 4. sort by turn cell's neighbourhoods count
         // 5. return first turn
 
-        console.log(turnsTree);
+        //console.log(turnsTree);
+
+        return (function unroll(tree, level) {
+            var list = [];
+            for (var i = 0; i < tree.length; i++) {
+                if (tree[i].next.length == 0) {
+                    return
+                }
+            }
+            return list;
+        }(turnsTree, 0));
     },
 
     makeTurn: function (parameters) {
@@ -155,7 +165,7 @@ var ai = {
         var turnTrees = [];
         var nMaxTurns = 10;
 
-        //var freeCells = utils.getPossibleTurns(model, size);
+        //var freeCells = utils.findPossibleTurns(model, size);
         //console.log(freeCells);
         //
         //var newModel = _.clone(model);

@@ -85,7 +85,7 @@ describe('Utils', function () {
         });
     });
 
-    describe('getPossibleTurns()', function () {
+    describe('findPossibleTurns()', function () {
         it('returns [x, y] coords of free cells', function () {
             // arrange
             var model = [
@@ -94,7 +94,7 @@ describe('Utils', function () {
                 1, 1, 1
             ];
             // act
-            var res = utils.getPossibleTurns(model, size);
+            var res = utils.findPossibleTurns(model, size);
             // assert
             res.should.eql([
                 { x: 1, y: 1, i: 4 },
@@ -108,6 +108,11 @@ describe('Utils', function () {
     describe('countNeighbourhoodsByIndex()', function () {
         it('get coords', function () {
             // arrange
+            var model = [
+                1, 1, 1,
+                1, 0, 0,
+                1, 1, 1
+            ];
             // act
             // assert
         });
